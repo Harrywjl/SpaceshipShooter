@@ -13,7 +13,7 @@ public class Player {
 
     public Player(String img) {
         xCoord = 50; // starting position is (50, 435), right on top of ground
-        yCoord = 435;
+        yCoord = 175;
         score = 0;
         try {
             image = ImageIO.read(new File(img));
@@ -35,7 +35,7 @@ public class Player {
     }
 
     public void moveRight() {
-        if (xCoord + MOVE_AMT <= 920) {
+        if (xCoord + MOVE_AMT <= 550) {
             xCoord += MOVE_AMT;
         }
     }
@@ -53,20 +53,19 @@ public class Player {
     }
 
     public void moveDown() {
-        if (yCoord + MOVE_AMT <= 435) {
+        if (yCoord + MOVE_AMT <= 349) {
             yCoord += MOVE_AMT;
         }
     }
 
     public void killEnemy() {
-        score += 10;
+        score += 100;
     }
 
     public BufferedImage getPlayerImage() {
         return image;
     }
 
-    // we use a "bounding Rectangle" for detecting collision
     public Rectangle playerRect() {
         int imageHeight = getPlayerImage().getHeight();
         int imageWidth = getPlayerImage().getWidth();

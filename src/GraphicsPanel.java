@@ -12,6 +12,7 @@ public class GraphicsPanel extends JPanel implements KeyListener {
     private Player player;
     private boolean[] pressedKeys;
     private ArrayList<Enemy> enemies;
+    private ArrayList<Projectile> projectiles;
 
     public GraphicsPanel() {
         try {
@@ -21,6 +22,7 @@ public class GraphicsPanel extends JPanel implements KeyListener {
         }
         player = new Player("src/Spaceship.png");
         enemies = new ArrayList<>();
+        projectiles = new ArrayList<>();
         pressedKeys = new boolean[128]; // 128 keys on keyboard, max keycode is 127
         addKeyListener(this);
         setFocusable(true); // this line of code + one below makes this panel active for keylistener events
@@ -33,16 +35,18 @@ public class GraphicsPanel extends JPanel implements KeyListener {
         g.drawImage(background, 0, 0, null);  // the order that things get "painted" matter; we put background down first
         g.drawImage(player.getPlayerImage(), player.getxCoord(), player.getyCoord(), null);
 
-        // this loop does two things:  it draws each Coin that gets placed with mouse clicks,
-        // and it also checks if the player has "intersected" (collided with) the Coin, and if so,
-        // the score goes up and the Coin is removed from the arraylist
-        for (int i = 0; i < enemies.size(); i++) {
-            Enemy enemy = enemies.get(i);
+        for (int e = 0; e < enemies.size(); e++) {
+            Enemy enemy = enemies.get(e);
             g.drawImage(enemy.getImage(), enemy.getxCoord(), enemy.getyCoord(), null); // draw Coin
-            if (player.playerRect().intersects(enemy.enemyRect())) { // check for collision
-                player.collectCoin();
-                enemies.remove(i);
-                i--;
+            for (int p = 0; p < projectiles.size(); p++) {
+                Projectile proj = projectiles.get(p);
+                proj.move();
+                g.drawImage(proj.getImage(), proj.getxCoord(), proj.getyCoord(), null);
+                if (proj.projectileRect().intersects(enemy.enemyRect())) { // check for collision
+                    player.killEnemy();
+                    enemies.remove(e);
+                    e--;
+                }
             }
         }
 
@@ -52,13 +56,11 @@ public class GraphicsPanel extends JPanel implements KeyListener {
 
         // player moves left (A)
         if (pressedKeys[65]) {
-            player.faceLeft();
             player.moveLeft();
         }
 
         // player moves right (D)
         if (pressedKeys[68]) {
-            player.faceRight();
             player.moveRight();
         }
 
@@ -70,6 +72,12 @@ public class GraphicsPanel extends JPanel implements KeyListener {
         // player moves down (S)
         if (pressedKeys[83]) {
             player.moveDown();
+        }
+
+        // player shoots (space)
+        if (pressedKeys[32]) {
+            Projectile p = new Projectile(player);
+            projectiles.add(p);
         }
     }
 

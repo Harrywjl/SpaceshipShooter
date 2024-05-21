@@ -9,9 +9,9 @@ public class Projectile {
     private int yCoord;
     private BufferedImage image;
 
-    public Projectile() {
-        xCoord = -1; // Set to front of spaceship
-        yCoord = -1; // Set to front of spaceship
+    public Projectile(Player s) {
+        xCoord = s.getxCoord() + 25;
+        yCoord = s.getyCoord();
         try {
             image = ImageIO.read(new File("src/Projectile.png"));
         } catch (IOException e) {
@@ -25,6 +25,12 @@ public class Projectile {
 
     public int getyCoord() {
         return yCoord;
+    }
+
+    public void move() {
+        if (xCoord + 1 <= 600) {
+            xCoord += 1;
+        }
     }
 
     public BufferedImage getImage() {
