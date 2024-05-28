@@ -5,13 +5,14 @@ import java.io.File;
 import java.io.IOException;
 
 public class Projectile {
-    private int xCoord;
-    private int yCoord;
+    static private double speed = 0.5;
+    private double xCoord;
+    private double yCoord;
     private BufferedImage image;
 
     public Projectile(Player s) {
-        xCoord = s.getxCoord() + 25;
-        yCoord = s.getyCoord();
+        xCoord = s.getxCoord() + 45;
+        yCoord = s.getyCoord() + 21;
         try {
             image = ImageIO.read(new File("src/Projectile.png"));
         } catch (IOException e) {
@@ -20,16 +21,16 @@ public class Projectile {
     }
 
     public int getxCoord() {
-        return xCoord;
+        return (int) xCoord;
     }
 
     public int getyCoord() {
-        return yCoord;
+        return (int) yCoord;
     }
 
     public void move() {
-        if (xCoord + 1 <= 600) {
-            xCoord += 1;
+        if (xCoord + speed < 610) {
+            xCoord += speed;
         }
     }
 
@@ -40,7 +41,7 @@ public class Projectile {
     public Rectangle projectileRect() {
         int imageHeight = getImage().getHeight();
         int imageWidth = getImage().getWidth();
-        Rectangle rect = new Rectangle(xCoord, yCoord, imageWidth, imageHeight);
+        Rectangle rect = new Rectangle((int) xCoord, (int) yCoord, imageWidth, imageHeight);
         return rect;
     }
 }

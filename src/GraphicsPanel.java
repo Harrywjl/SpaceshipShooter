@@ -22,7 +22,7 @@ public class GraphicsPanel extends JPanel implements KeyListener {
         }
         player = new Player("src/Spaceship.png");
         enemies = new ArrayList<>();
-        projectiles = new ArrayList<>();
+        projectiles = new ArrayList<Projectile>();
         pressedKeys = new boolean[128]; // 128 keys on keyboard, max keycode is 127
         addKeyListener(this);
         setFocusable(true); // this line of code + one below makes this panel active for keylistener events
@@ -38,10 +38,22 @@ public class GraphicsPanel extends JPanel implements KeyListener {
         for (int e = 0; e < enemies.size(); e++) {
             Enemy enemy = enemies.get(e);
             g.drawImage(enemy.getImage(), enemy.getxCoord(), enemy.getyCoord(), null); // draw Coin
+            }
+
+        for (int p = 0; p < projectiles.size(); p+=25) {
+        Projectile proj = projectiles.get(p);
+        g.drawImage(proj.getImage(), proj.getxCoord(), proj.getyCoord(), null);
+        proj.move();
+            if (proj.getxCoord() == 610) {
+                projectiles.remove(p);
+                p--;
+            }
+        }
+
+        for (int e = 0; e < enemies.size(); e++) {
+            Enemy enemy = enemies.get(e);
             for (int p = 0; p < projectiles.size(); p++) {
                 Projectile proj = projectiles.get(p);
-                proj.move();
-                g.drawImage(proj.getImage(), proj.getxCoord(), proj.getyCoord(), null);
                 if (proj.projectileRect().intersects(enemy.enemyRect())) { // check for collision
                     player.killEnemy();
                     enemies.remove(e);
@@ -76,8 +88,7 @@ public class GraphicsPanel extends JPanel implements KeyListener {
 
         // player shoots (space)
         if (pressedKeys[32]) {
-            Projectile p = new Projectile(player);
-            projectiles.add(p);
+            projectiles.add(new Projectile(player));
         }
     }
 

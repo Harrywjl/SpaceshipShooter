@@ -12,7 +12,7 @@ public class Player {
     private int score;
 
     public Player(String img) {
-        xCoord = 50; // starting position is (50, 435), right on top of ground
+        xCoord = 50;
         yCoord = 175;
         score = 0;
         try {
