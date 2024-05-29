@@ -28,14 +28,14 @@ public class Projectile {
         return (int) yCoord;
     }
 
+    public BufferedImage getImage() {
+        return image;
+    }
+
     public void move() {
         if (xCoord + speed < 610) {
             xCoord += speed;
         }
-    }
-
-    public BufferedImage getImage() {
-        return image;
     }
 
     public Rectangle projectileRect() {

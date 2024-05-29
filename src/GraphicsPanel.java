@@ -11,10 +11,10 @@ public class GraphicsPanel extends JPanel implements KeyListener {
     private BufferedImage background;
     private Player player;
     private boolean[] pressedKeys;
-    private boolean shoot;
     private ArrayList<Enemy> enemies;
     private ArrayList<Projectile> projectiles;
     private long lastPressProcessed = 0;
+    private int enemyInterval = 0;
 
     public GraphicsPanel() {
         try {
@@ -37,11 +37,6 @@ public class GraphicsPanel extends JPanel implements KeyListener {
         g.drawImage(background, 0, 0, null);  // the order that things get "painted" matter; we put background down first
         g.drawImage(player.getPlayerImage(), player.getxCoord(), player.getyCoord(), null);
 
-        for (int e = 0; e < enemies.size(); e++) {
-            Enemy enemy = enemies.get(e);
-            g.drawImage(enemy.getImage(), enemy.getxCoord(), enemy.getyCoord(), null); // draw Coin
-            }
-
         for (int p = 0; p < projectiles.size(); p++) {
         Projectile proj = projectiles.get(p);
         g.drawImage(proj.getImage(), proj.getxCoord(), proj.getyCoord(), null);
@@ -52,14 +47,25 @@ public class GraphicsPanel extends JPanel implements KeyListener {
             }
         }
 
+        Thread thread = new Thread(runnable);
+        thread.start();
+        enemyInterval++;
         for (int e = 0; e < enemies.size(); e++) {
+            if (enemies.get(e).getxCoord() <= 0) {
+                enemies.remove(e);
+                e--;
+            }
             Enemy enemy = enemies.get(e);
+            g.drawImage(enemy.getImage(), enemy.getxCoord(), enemy.getyCoord(), null);
+            enemy.move();
             for (int p = 0; p < projectiles.size(); p++) {
                 Projectile proj = projectiles.get(p);
                 if (proj.projectileRect().intersects(enemy.enemyRect())) { // check for collision
                     player.killEnemy();
                     enemies.remove(e);
                     e--;
+                    projectiles.remove(p);
+                    p--;
                 }
             }
         }
@@ -109,5 +115,21 @@ public class GraphicsPanel extends JPanel implements KeyListener {
         int key = e.getKeyCode();
         pressedKeys[key] = false;
     }
+
+    // ----- Periodically create enemies -----
+    final long timeInterval = 100;
+    Runnable runnable = new Runnable() {
+        public void run() {
+            while (enemyInterval > 200) {
+                enemies.add(new Enemy());
+                enemyInterval -= 200;
+                try {
+                    Thread.sleep(timeInterval);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
 
 }
