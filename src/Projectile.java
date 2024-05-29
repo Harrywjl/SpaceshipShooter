@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Projectile {
-    static private double speed = 0.5;
+    static private double speed = 0.25;
     private double xCoord;
     private double yCoord;
     private BufferedImage image;

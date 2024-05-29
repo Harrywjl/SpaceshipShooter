@@ -11,8 +11,10 @@ public class GraphicsPanel extends JPanel implements KeyListener {
     private BufferedImage background;
     private Player player;
     private boolean[] pressedKeys;
+    private boolean shoot;
     private ArrayList<Enemy> enemies;
     private ArrayList<Projectile> projectiles;
+    private long lastPressProcessed = 0;
 
     public GraphicsPanel() {
         try {
@@ -40,11 +42,11 @@ public class GraphicsPanel extends JPanel implements KeyListener {
             g.drawImage(enemy.getImage(), enemy.getxCoord(), enemy.getyCoord(), null); // draw Coin
             }
 
-        for (int p = 0; p < projectiles.size(); p+=25) {
+        for (int p = 0; p < projectiles.size(); p++) {
         Projectile proj = projectiles.get(p);
         g.drawImage(proj.getImage(), proj.getxCoord(), proj.getyCoord(), null);
         proj.move();
-            if (proj.getxCoord() == 610) {
+            if (proj.getxCoord() > 600) {
                 projectiles.remove(p);
                 p--;
             }
@@ -86,10 +88,6 @@ public class GraphicsPanel extends JPanel implements KeyListener {
             player.moveDown();
         }
 
-        // player shoots (space)
-        if (pressedKeys[32]) {
-            projectiles.add(new Projectile(player));
-        }
     }
 
     // ----- KeyListener interface methods -----
@@ -99,6 +97,11 @@ public class GraphicsPanel extends JPanel implements KeyListener {
         // see this for all keycodes: https://stackoverflow.com/questions/15313469/java-keyboard-keycodes-list
         // A = 65, D = 68, S = 83, W = 87, left = 37, up = 38, right = 39, down = 40, space = 32, enter = 10
         int key = e.getKeyCode();
+        // player shoots (space)
+        if (key == 32 && System.currentTimeMillis() - lastPressProcessed > 50) {
+            projectiles.add(new Projectile(player));
+            lastPressProcessed = System.currentTimeMillis();
+        }
         pressedKeys[key] = true;
     }
 

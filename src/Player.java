@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Player {
-    private final double MOVE_AMT = 0.2;
+    private final double MOVE_AMT = 0.15;
     private BufferedImage image;
     private double xCoord;
     private double yCoord;
