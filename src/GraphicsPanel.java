@@ -25,16 +25,16 @@ public class GraphicsPanel extends JPanel implements KeyListener {
         player = new Player("src/Spaceship.png");
         enemies = new ArrayList<>();
         projectiles = new ArrayList<Projectile>();
-        pressedKeys = new boolean[128]; // 128 keys on keyboard, max keycode is 127
+        pressedKeys = new boolean[128];
         addKeyListener(this);
-        setFocusable(true); // this line of code + one below makes this panel active for keylistener events
-        requestFocusInWindow(); // see comment above
+        setFocusable(true);
+        requestFocusInWindow();
     }
 
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);  // just do this
-        g.drawImage(background, 0, 0, null);  // the order that things get "painted" matter; we put background down first
+        super.paintComponent(g);
+        g.drawImage(background, 0, 0, null);
         if (player.getStatus()) {
             g.drawImage(player.getPlayerImage(), player.getxCoord(), player.getyCoord(), null);
             for (int p = 0; p < projectiles.size(); p++) {
@@ -46,7 +46,6 @@ public class GraphicsPanel extends JPanel implements KeyListener {
                     p--;
                 }
             }
-
             Thread thread = new Thread(runnable);
             thread.start();
             enemyInterval++;
@@ -108,11 +107,9 @@ public class GraphicsPanel extends JPanel implements KeyListener {
     }
 
     // ----- KeyListener interface methods -----
-    public void keyTyped(KeyEvent e) { } // unimplemented
+    public void keyTyped(KeyEvent e) { }
 
     public void keyPressed(KeyEvent e) {
-        // see this for all keycodes: https://stackoverflow.com/questions/15313469/java-keyboard-keycodes-list
-        // A = 65, D = 68, S = 83, W = 87, left = 37, up = 38, right = 39, down = 40, space = 32, enter = 10
         int key = e.getKeyCode();
         // player shoots (space)
         if (key == 32 && System.currentTimeMillis() - lastPressProcessed > 50) {

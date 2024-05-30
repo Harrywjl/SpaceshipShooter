@@ -77,9 +77,9 @@ public class Player {
     }
 
     public Rectangle playerRect() {
-        int imageHeight = getPlayerImage().getHeight() - 14;
-        int imageWidth = getPlayerImage().getWidth() - 14;
-        Rectangle rect = new Rectangle((int) xCoord, (int) yCoord, imageWidth, imageHeight);
+        int imageHeight = getPlayerImage().getHeight() - 15;
+        int imageWidth = getPlayerImage().getWidth() - 15;
+        Rectangle rect = new Rectangle((int) xCoord + 8, (int) yCoord + 8, imageWidth, imageHeight);
         return rect;
     }
 }
