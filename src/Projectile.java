@@ -11,12 +11,14 @@ public class Projectile {
     private BufferedImage image;
 
     public Projectile(Player s) {
-        xCoord = s.getxCoord() + 45;
-        yCoord = s.getyCoord() + 21;
-        try {
-            image = ImageIO.read(new File("src/Projectile.png"));
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+        if (s.getStatus()) {
+            xCoord = s.getxCoord() + 45;
+            yCoord = s.getyCoord() + 21;
+            try {
+                image = ImageIO.read(new File("src/Projectile.png"));
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 

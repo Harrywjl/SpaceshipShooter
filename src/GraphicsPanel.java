@@ -35,63 +35,74 @@ public class GraphicsPanel extends JPanel implements KeyListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);  // just do this
         g.drawImage(background, 0, 0, null);  // the order that things get "painted" matter; we put background down first
-        g.drawImage(player.getPlayerImage(), player.getxCoord(), player.getyCoord(), null);
-
-        for (int p = 0; p < projectiles.size(); p++) {
-        Projectile proj = projectiles.get(p);
-        g.drawImage(proj.getImage(), proj.getxCoord(), proj.getyCoord(), null);
-        proj.move();
-            if (proj.getxCoord() > 600) {
-                projectiles.remove(p);
-                p--;
-            }
-        }
-
-        Thread thread = new Thread(runnable);
-        thread.start();
-        enemyInterval++;
-        for (int e = 0; e < enemies.size(); e++) {
-            if (enemies.get(e).getxCoord() <= 0) {
-                enemies.remove(e);
-                e--;
-            }
-            Enemy enemy = enemies.get(e);
-            g.drawImage(enemy.getImage(), enemy.getxCoord(), enemy.getyCoord(), null);
-            enemy.move();
+        if (player.getStatus()) {
+            g.drawImage(player.getPlayerImage(), player.getxCoord(), player.getyCoord(), null);
             for (int p = 0; p < projectiles.size(); p++) {
                 Projectile proj = projectiles.get(p);
-                if (proj.projectileRect().intersects(enemy.enemyRect())) { // check for collision
-                    player.killEnemy();
-                    enemies.remove(e);
-                    e--;
+                g.drawImage(proj.getImage(), proj.getxCoord(), proj.getyCoord(), null);
+                proj.move();
+                if (proj.getxCoord() > 600) {
                     projectiles.remove(p);
                     p--;
                 }
             }
-        }
 
-        // draw score
-        g.setFont(new Font("Courier New", Font.BOLD, 24));
-        g.drawString("Score: " + player.getScore(), 20, 40);
+            Thread thread = new Thread(runnable);
+            thread.start();
+            enemyInterval++;
+            for (int e = 0; e < enemies.size(); e++) {
+                if (enemies.get(e).getxCoord() <= 0) {
+                    enemies.remove(e);
+                    e--;
+                }
+            }
+            for (int e = 0; e < enemies.size(); e++) {
+                Enemy enemy = enemies.get(e);
+                g.drawImage(enemy.getImage(), enemy.getxCoord(), enemy.getyCoord(), null);
+                enemy.move();
+                if (player.playerRect().intersects(enemy.enemyRect())) { // check for collision
+                    player.gameOver();
+                }
+                for (int p = 0; p < projectiles.size(); p++) {
+                    Projectile proj = projectiles.get(p);
+                    if (proj.projectileRect().intersects(enemy.enemyRect())) { // check for collision
+                        player.killEnemy();
+                        enemies.remove(e);
+                        e--;
+                        projectiles.remove(p);
+                        p--;
+                    }
+                }
+            }
 
-        // player moves left (A)
-        if (pressedKeys[65]) {
-            player.moveLeft();
-        }
+            // draw score
+            g.setFont(new Font("Courier New", Font.BOLD, 24));
+            g.drawString("Score: " + player.getScore(), 20, 40);
 
-        // player moves right (D)
-        if (pressedKeys[68]) {
-            player.moveRight();
-        }
+            // player moves left (A)
+            if (pressedKeys[65]) {
+                player.moveLeft();
+            }
 
-        // player moves up (W)
-        if (pressedKeys[87]) {
-            player.moveUp();
-        }
+            // player moves right (D)
+            if (pressedKeys[68]) {
+                player.moveRight();
+            }
 
-        // player moves down (S)
-        if (pressedKeys[83]) {
-            player.moveDown();
+            // player moves up (W)
+            if (pressedKeys[87]) {
+                player.moveUp();
+            }
+
+            // player moves down (S)
+            if (pressedKeys[83]) {
+                player.moveDown();
+            }
+        } else {
+            g.setFont(new Font("Courier New", Font.BOLD, 80));
+            g.drawString("GAME OVER", 75, 125);
+            g.setFont(new Font("Courier New", Font.BOLD, 50));
+            g.drawString("FINAL Score: " + player.getScore(), 50, 200);
         }
 
     }

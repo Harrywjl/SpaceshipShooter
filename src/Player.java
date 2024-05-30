@@ -10,11 +10,13 @@ public class Player {
     private double xCoord;
     private double yCoord;
     private int score;
+    private boolean alive;
 
     public Player(String img) {
         xCoord = 50;
         yCoord = 175;
         score = 0;
+        alive = true;
         try {
             image = ImageIO.read(new File(img));
         } catch (IOException e) {
@@ -32,6 +34,10 @@ public class Player {
 
     public int getScore() {
         return score;
+    }
+
+    public boolean getStatus() {
+        return alive;
     }
 
     public void moveRight() {
@@ -62,13 +68,17 @@ public class Player {
         score += 100;
     }
 
+    public void gameOver() {
+        alive = false;
+    }
+
     public BufferedImage getPlayerImage() {
         return image;
     }
 
     public Rectangle playerRect() {
-        int imageHeight = getPlayerImage().getHeight();
-        int imageWidth = getPlayerImage().getWidth();
+        int imageHeight = getPlayerImage().getHeight() - 14;
+        int imageWidth = getPlayerImage().getWidth() - 14;
         Rectangle rect = new Rectangle((int) xCoord, (int) yCoord, imageWidth, imageHeight);
         return rect;
     }
