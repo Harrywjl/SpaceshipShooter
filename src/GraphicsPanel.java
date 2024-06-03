@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GraphicsPanel extends JPanel implements KeyListener {
     private BufferedImage background;
@@ -13,9 +15,10 @@ public class GraphicsPanel extends JPanel implements KeyListener {
     private boolean[] pressedKeys;
     private ArrayList<Enemy> enemies;
     private ArrayList<Projectile> projectiles;
+    private ArrayList<Explosion> explosions;
     private long lastPressProcessed = 0;
     private int enemyInterval = 0;
-
+    private ExplosionAnimation animation = null;
     public GraphicsPanel() {
         try {
             background = ImageIO.read(new File("src/Background.png"));
@@ -23,8 +26,9 @@ public class GraphicsPanel extends JPanel implements KeyListener {
             System.out.println(e.getMessage());
         }
         player = new Player("src/Spaceship.png");
-        enemies = new ArrayList<>();
+        enemies = new ArrayList<Enemy>();
         projectiles = new ArrayList<Projectile>();
+        explosions = new ArrayList<Explosion>();
         pressedKeys = new boolean[128];
         addKeyListener(this);
         setFocusable(true);
@@ -46,6 +50,22 @@ public class GraphicsPanel extends JPanel implements KeyListener {
                     p--;
                 }
             }
+            for (int i = 0; i < explosions.size(); i++) {
+                Explosion e = explosions.get(i);
+                g.drawImage(e.getImage(), e.getxCoord(), e.getyCoord(), null);
+                if (e.explosionIconRect().intersects(player.playerRect())) {
+                    animation = new ExplosionAnimation();
+                    explosions.remove(i);
+                    i--;
+                }
+            }
+            if (animation != null) {
+                if (animation.getTimer() < 14000) {
+                    g.drawImage(animation.getImage(), animation.getxCoord(), animation.getyCoord(), null);
+                } else {
+                    animation = null;
+                }
+            }
             Thread thread = new Thread(runnable);
             thread.start();
             enemyInterval++;
@@ -53,6 +73,13 @@ public class GraphicsPanel extends JPanel implements KeyListener {
                 if (enemies.get(e).getxCoord() <= 0) {
                     enemies.remove(e);
                     e--;
+                }
+                if (animation != null) {
+                    if (animation.explosionRect().intersects(enemies.get(e).enemyRect())) {
+                        enemies.remove(e);
+                        e--;
+                        player.killEnemy();
+                    }
                 }
             }
             for (int e = 0; e < enemies.size(); e++) {
@@ -66,6 +93,9 @@ public class GraphicsPanel extends JPanel implements KeyListener {
                     Projectile proj = projectiles.get(p);
                     if (proj.projectileRect().intersects(enemy.enemyRect())) { // check for collision
                         player.killEnemy();
+                        if ((int) (Math.random() * 5) == 0) {
+                            explosions.add(new Explosion(enemy));
+                        }
                         enemies.remove(e);
                         e--;
                         projectiles.remove(p);
@@ -125,14 +155,13 @@ public class GraphicsPanel extends JPanel implements KeyListener {
     }
 
     // ----- Periodically create enemies -----
-    final long timeInterval = 100;
     Runnable runnable = new Runnable() {
         public void run() {
             while (enemyInterval > 200) {
                 enemies.add(new Enemy());
                 enemyInterval -= 200;
                 try {
-                    Thread.sleep(timeInterval);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
