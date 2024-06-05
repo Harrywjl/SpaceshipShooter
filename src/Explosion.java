@@ -32,7 +32,7 @@ public class Explosion {
     }
 
     public void move() {
-        yCoord -= 0.1;
+        yCoord += 0.025;
     }
 
     // we use a "bounding Rectangle" for detecting collision

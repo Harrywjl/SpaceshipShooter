@@ -12,8 +12,8 @@ public class ExplosionAnimation {
     private int time = 0;
 
     public ExplosionAnimation() {
-        xCoord = 500;
-        yCoord = 400;
+        xCoord = 275;
+        yCoord = 90;
         images = new ArrayList<BufferedImage>();
         try {
             images.add(ImageIO.read(new File("src/Explosion1.png")));
@@ -42,22 +42,18 @@ public class ExplosionAnimation {
 
     public BufferedImage getImage() {
         time++;
-        System.out.println(time);
         int img = time / 1750;
         if (img < 8) {
             return images.get(img);
         }
-        return null;
+        return images.get(7);
     }
 
     // we use a "bounding Rectangle" for detecting collision
     public Rectangle explosionRect() {
-        if (getTimer() < 14000) {
-            int imageHeight = getImage().getHeight();
-            int imageWidth = getImage().getWidth();
-            Rectangle rect = new Rectangle((int) xCoord, (int) yCoord, imageWidth, imageHeight);
-            return rect;
-        }
-        return new Rectangle((int) xCoord, (int) yCoord, 200, 200);
+        int imageHeight = getImage().getHeight();
+        int imageWidth = getImage().getWidth();
+        Rectangle rect = new Rectangle((int) xCoord, (int) yCoord, imageWidth, imageHeight);
+        return rect;
     }
 }

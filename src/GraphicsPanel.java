@@ -6,8 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class GraphicsPanel extends JPanel implements KeyListener {
     private BufferedImage background;
@@ -53,6 +51,7 @@ public class GraphicsPanel extends JPanel implements KeyListener {
             for (int i = 0; i < explosions.size(); i++) {
                 Explosion e = explosions.get(i);
                 g.drawImage(e.getImage(), e.getxCoord(), e.getyCoord(), null);
+                e.move();
                 if (e.explosionIconRect().intersects(player.playerRect())) {
                     animation = new ExplosionAnimation();
                     explosions.remove(i);
@@ -93,7 +92,7 @@ public class GraphicsPanel extends JPanel implements KeyListener {
                     Projectile proj = projectiles.get(p);
                     if (proj.projectileRect().intersects(enemy.enemyRect())) { // check for collision
                         player.killEnemy();
-                        if ((int) (Math.random() * 5) == 0) {
+                        if ((int) (Math.random() * 15) == 0) { // chances of explosion power up drop
                             explosions.add(new Explosion(enemy));
                         }
                         enemies.remove(e);
